@@ -1,14 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import toast from "react-hot-toast";
-import { imageUpload } from "@/lib/utils";
+import { authService } from "@/app/services/authService";
+import { useAuthStore } from "@/stores/authStore";
+
 
 // Validation Schema
 const formSchema = z
@@ -17,9 +19,6 @@ const formSchema = z
     email: z.string().email({ message: "Invalid email address." }),
     password: z.string().min(6, { message: "Password must be at least 6 characters." }),
     confirmPassword: z.string().min(6, { message: "Confirm Password is required." }),
-    profileImage: z
-      .custom((file) => file instanceof File, { message: "Profile image is required." })
-      .refine((file) => file && file.size > 0, { message: "Invalid file. Please upload an image." }),
     referralCode: z.string().optional(), // Optional referral
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -36,11 +35,14 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ referralCode }: RegisterFormProps) {
+  const setAuthData = useAuthStore((state) => state.setAuthData);
+
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     setValue,
-    reset,
+    // reset,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -49,14 +51,12 @@ export function RegisterForm({ referralCode }: RegisterFormProps) {
       email: "",
       password: "",
       confirmPassword: "",
-      profileImage: null,
       referralCode: referralCode || "",
     },
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
 
   const togglePassword = () => setShowPassword((prev) => !prev);
   const toggleConfirmPassword = () => setShowConfirmPassword((prev) => !prev);
@@ -66,35 +66,36 @@ export function RegisterForm({ referralCode }: RegisterFormProps) {
     if (referralCode) setValue("referralCode", referralCode);
   }, [referralCode, setValue]);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setValue("profileImage", file);
-      setPreview(URL.createObjectURL(file));
-    }
-  };
+const onSubmit: SubmitHandler<FormData> = async (data) => {
+  const toastId = toast.loading("Creating account...");
+  const { name, email, password, referralCode } = data;
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const toastId = toast.loading("Waiting...");
-    const { name, email, password, profileImage, referralCode } = data;
-    const imageUrl = await imageUpload(profileImage);
+  try {
+    const res = await authService.registerUser({
+      name,
+      email,
+      password,
+      referralCode,
+    });
 
-    if (!imageUrl) {
-      toast.dismiss(toastId);
-      return toast.error("Image upload failed!");
-    }
+    setAuthData(res?.data?.id, res?.data?.email, password);
 
-    const payload = { name, email, password, image: imageUrl, role: "user", referralCode };
-    // const userConfirm = await registerUser(payload);
+    console.log(res, "...>>>>>>>>")
+    console.log(res?.data?.id, "...>>>>>>>>")
 
     toast.dismiss(toastId);
+    toast.success("Account created successfully! OTP sent to your email.");
 
-    if (true) {
-      toast.success("Successfully created!");
-      reset();
-      setPreview(null);
-    }
-  };
+    if (!res?.data?.id) return;
+
+    router.push(`/register/otp?userId=${res?.data?.id}`);
+  } catch (error: unknown) {
+    toast.dismiss(toastId);
+    const message = error instanceof Error ? error.message : "Registration failed";
+    toast.error(message);
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-[80vh] my-6 bg-gray-50">
@@ -187,31 +188,6 @@ export function RegisterForm({ referralCode }: RegisterFormProps) {
               {...register("referralCode")}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 border-gray-300"
             />
-          </div>
-
-          {/* Profile Image */}
-          <div>
-            <label className="block text-gray-700 mb-2">Profile Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-            />
-            {preview && (
-              <div className="mt-2">
-                <Image
-                  src={preview}
-                  alt="Profile Preview"
-                  width={100}
-                  height={100}
-                  className="rounded-full object-cover"
-                />
-              </div>
-            )}
-            {errors.profileImage && (
-              <p className="text-red-500 text-sm mt-1">{errors.profileImage.message}</p>
-            )}
           </div>
 
           {/* Submit */}

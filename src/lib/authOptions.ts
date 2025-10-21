@@ -1,74 +1,94 @@
-// import { loginUser } from "@/app/actions/auth/loginUser";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
 import type { NextAuthOptions } from "next-auth";
-import type { User as NextAuthUser } from "next-auth";
+import axios from "axios";
 
-interface CustomUser extends NextAuthUser {
-  role?: string;
-  providerAccountId?: string;
-}
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api/v1";
 
 export const authOptions: NextAuthOptions = {
-  // Configure one or more authentication providers
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Email", type: "email", placeholder: "Enter Email" },
+        email: { label: "Email", type: "email", placeholder: "Enter your email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
-        const user = await loginUser(credentials);
+     async authorize(credentials) {
+       try {
+         const { data } = await axios.post(`${BASE_URL}/auth/login`, {
+           email: credentials?.email,
+           password: credentials?.password,
+         });
+     
+         const userData = data?.data;
+         console.log("✅ Backend login response:", userData);
+     
+         if (userData?.accessToken) {
+           return {
+             id: userData.id,
+             name: userData.name,
+             email: userData.email,
+             role: userData.role,
+             accessToken: userData.accessToken,
+           };
+         }
 
-        if (user) {
-          return user as CustomUser;
-        } else {
-          return null;
-        }
-      },
+      return null;
+  } catch (error) {
+    console.error("❌ Login failed:", error);
+    return null;
+  }
+}
+
     }),
+
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID || "",
-      clientSecret: process.env.GITHUB_SECRET || "",
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+
   pages: {
     signIn: "/login",
   },
+
   callbacks: {
     async signIn({ user, account }) {
-      if (account) {
-        const { providerAccountId, provider } = account;
-        const { email: user_email, name, image } = user as CustomUser;
-        const userCollection = dbConnect(collectionNameObj.userCollection);
-        const isExistUser = await userCollection.findOne({ providerAccountId });
-
-        if (!isExistUser) {
-          const payload = { providerAccountId, provider, email: user_email, name, image, role: "user" };
-          await userCollection.insertOne(payload);
+      try {
+        if (account && account.provider !== "credentials") {
+          const { email, name } = user;
+          await axios.post(`${BASE_URL}/auth/create-account`, { email, name });
         }
+        return true;
+      } catch (error) {
+        console.error("Social login failed:", error);
+        return false;
       }
-      return true;
     },
-    async session({ session, token }) {
-      if (token) {
-        session.user.name = token.name as string;
-        session.user.role = token.role as string;
-      }
-      return session;
-    },
+
     async jwt({ token, user }) {
       if (user) {
-        token.name = (user as CustomUser).name;
-        token.role = (user as CustomUser).role;
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.role = user.role;
+        token.accessToken = user.accessToken;
       }
       return token;
     },
+
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.role = token.role as string;
+        session.accessToken = token.accessToken as string;
+      }
+      return session;
+    },
   },
+
+  secret: process.env.NEXTAUTH_SECRET,
 };
