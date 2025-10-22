@@ -43,8 +43,6 @@ export default function OtpPage() {
 
       toast.success(data?.data?.message);
 
-       console.log(data?.data?.email, ">>>>>>>>>>>>>>>>>>>>>>>>>>>> check email")
-
       // Optional auto login
       await signIn("credentials", {
         redirect: true,
@@ -52,7 +50,7 @@ export default function OtpPage() {
         password: password,
       });
 
-      router.push("/dashboard");
+      router.push("/");
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || "OTP verification failed");

@@ -1,7 +1,7 @@
 // import axios from "@/lib/api";
 
 
-// const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api/v1";
+// const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://neo-market-server.onrender.com/api/v1";
 
 // export const userService = {
 //   // ✅ Register a new user

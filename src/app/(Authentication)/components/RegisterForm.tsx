@@ -80,9 +80,6 @@ const onSubmit: SubmitHandler<FormData> = async (data) => {
 
     setAuthData(res?.data?.id, res?.data?.email, password);
 
-    console.log(res, "...>>>>>>>>")
-    console.log(res?.data?.id, "...>>>>>>>>")
-
     toast.dismiss(toastId);
     toast.success("Account created successfully! OTP sent to your email.");
 

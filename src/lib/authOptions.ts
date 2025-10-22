@@ -4,7 +4,7 @@ import type { NextAuthOptions } from "next-auth";
 import axios from "axios";
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000/api/v1";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "https://neo-market-server.onrender.com/api/v1";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -58,7 +58,7 @@ export const authOptions: NextAuthOptions = {
       try {
         if (account && account.provider !== "credentials") {
           const { email, name } = user;
-          await axios.post(`${BASE_URL}/auth/create-account`, { email, name });
+          await axios.post(`${BASE_URL}/auth/create-account-with-google`, { email, name });
         }
         return true;
       } catch (error) {
