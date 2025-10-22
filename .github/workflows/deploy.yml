@@ -1,0 +1,39 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Next.js
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+        
+      - name: Build Next.js
+        run: npm run build
+
+
+      # 7️⃣ Deploy to Vercel (optional)
+      # If using Vercel, you can use CLI deploy instead of GitHub Pages
+      # - name: Deploy to Vercel
+      #   run: npx vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
