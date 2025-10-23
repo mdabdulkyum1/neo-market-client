@@ -1,8 +1,7 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
-import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
@@ -10,9 +9,8 @@ import { signIn } from "next-auth/react";
 import { authService } from "@/app/services/authService";
 import { useAuthStore } from "@/stores/authStore";
 
-export default function OtpPage() {
-   const { email, password } = useAuthStore();
-  const router = useRouter();
+function OtpPageContent() {
+  const { email, password } = useAuthStore();
   const searchParams = useSearchParams();
   const userId = searchParams.get("userId") || "";
 
@@ -21,7 +19,6 @@ export default function OtpPage() {
   const [resendLoading, setResendLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
-  // 🕒 Countdown timer (every second)
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
@@ -30,29 +27,31 @@ export default function OtpPage() {
     return () => clearInterval(timer);
   }, [countdown]);
 
-  // ✅ Handle OTP Verification
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otp.trim()) return toast.error("Please enter the OTP");
 
     setLoading(true);
     try {
-      const data = await authService.verifyOtp({
-        userId,
-        otpCode: otp,
-        type: "register",
-      });
-
-      toast.success(data?.data?.message);
-
-      // Optional auto login
-      await signIn("credentials", {
-        redirect: true,
-        email: data?.data?.email,
-        password: password,
-      });
-
-      router.push("/");
+      await toast.promise(
+        authService.verifyOtp({ userId, otpCode: otp, type: "register" }),
+        {
+          loading: "Verifying OTP...",
+          success: (data) => {
+            setTimeout(() => {
+              signIn("credentials", {
+                redirect: true,
+                email: data.data.email,
+                password: password,
+                callbackUrl: "/",
+              });
+            }, 1000);
+            return data.data.message || "OTP verified successfully!";
+          },
+          error: (err) =>
+            err?.response?.data?.message || "OTP verification failed",
+        }
+      );
     } catch (error) {
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || "OTP verification failed");
@@ -61,23 +60,18 @@ export default function OtpPage() {
     }
   };
 
-  // ✅ Handle Resend OTP
   const handleResend = async () => {
     if (countdown > 0) return;
     setResendLoading(true);
     try {
-
-    if (!email || !userId) {
+      if (!email || !userId) {
         toast.error("Missing user info");
-      return;
-    }
+        return;
+      }
       const data = await authService.resendOtp({ userId, email });
-      
       toast.success(data.message || "OTP resent successfully");
-      setCountdown(300); // ⏱️ 5 minutes = 300 seconds
+      setCountdown(300);
     } catch (error) {
-      console.log("hello")
-      console.log(error, "otp err??????????????>>>>>>>>>>");
       const err = error as AxiosError<{ message: string }>;
       toast.error(err.response?.data?.message || "Failed to resend OTP");
     } finally {
@@ -85,7 +79,6 @@ export default function OtpPage() {
     }
   };
 
-  // Format countdown (mm:ss)
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -140,5 +133,19 @@ export default function OtpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OtpPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-screen text-gray-500">
+          Loading OTP page...
+        </div>
+      }
+    >
+      <OtpPageContent />
+    </Suspense>
   );
 }

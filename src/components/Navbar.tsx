@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { signOut, useSession } from 'next-auth/react';
+import Image from "next/image";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -68,6 +69,16 @@ export default function Navbar() {
                   >
                     Dashboard
                   </Link>
+                </motion.div>
+                <motion.div variants={navItemVariants} initial="hidden" animate="visible">
+                  <Image
+                        src={session.user?.image || "https://ui-avatars.com/api/?name=User+Name&background=0073B1&color=fff"}
+                        alt="User"
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                        title={session.user?.name}
+                      />
                 </motion.div>
                 <motion.div variants={navItemVariants} initial="hidden" animate="visible">
                   <button
