@@ -1,6 +1,7 @@
 "use client"
 
 import { ShoppingCart } from "lucide-react"
+import Image from "next/image"
 import { toast } from "react-hot-toast"
 
 interface Product {
@@ -26,7 +27,7 @@ export default function ProductListItem({ product }: ProductListItemProps) {
     <div className="flex flex-col sm:flex-row gap-4 p-4 rounded-lg border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-300 animate-in fade-in slide-in-from-left-2 duration-300">
       {/* Product Image */}
       <div className="w-full sm:w-32 h-32 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden transition-transform duration-300 hover:scale-105">
-        <img src={product.image || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
+        <Image width={100} height={100} src={product.image || "/placeholder.svg"} alt={product.name} className="w-full h-full object-cover" />
       </div>
 
       {/* Product Info */}
