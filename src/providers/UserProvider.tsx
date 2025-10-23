@@ -11,8 +11,6 @@ interface Props {
 export default function UserProvider({ user, children }: Props) {
   const setUser = useUserStore((state) => state.setUser);
 
-  console.log("🚀 ~ file: UserProvider.tsx:14 ~ UserProvider ~ user", user);
-
   useEffect(() => {
     if (user) setUser(user);
   }, [user, setUser]);
