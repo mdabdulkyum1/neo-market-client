@@ -7,11 +7,14 @@ import { useState } from 'react';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { signOut, useSession } from 'next-auth/react';
 import Image from "next/image";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/providers/CartProvider";
 
 export default function Navbar() {
   const pathname = usePathname();
   // Use NextAuth session hook to check auth status
   const { data: session, status } = useSession();
+  const { getTotalItems } = useCart();
   const isLoggedIn = status === 'authenticated';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -58,6 +61,16 @@ export default function Navbar() {
             <motion.div variants={navItemVariants} initial="hidden" animate="visible">
               <Link href="/products" className="text-gray-800 hover:text-indigo-500 transition">
                 Products
+              </Link>
+            </motion.div>
+            <motion.div variants={navItemVariants} initial="hidden" animate="visible">
+              <Link href="/checkout" className="relative text-gray-800 hover:text-indigo-500 transition">
+                <ShoppingCart className="w-5 h-5" />
+                {getTotalItems() > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
               </Link>
             </motion.div>
             {isLoggedIn ? (
@@ -141,6 +154,21 @@ export default function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Products
+            </Link>
+            <Link
+              href="/checkout"
+              className="relative text-gray-800 hover:text-indigo-500 transition"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5" />
+                <span>Cart</span>
+                {getTotalItems() > 0 && (
+                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </div>
             </Link>
             {isLoggedIn ? (
               <>

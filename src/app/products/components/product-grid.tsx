@@ -1,9 +1,11 @@
 "use client"
 
 import { useMemo } from "react"
+import { motion } from "framer-motion"
 import ProductCard from "./product-card"
 import ProductTopbar from "./product-topbar"
 import ProductListItem from "./product-list-item"
+import { allProducts } from "@/lib/products"
 
 interface ProductGridProps {
   selectedCategory: string
@@ -13,90 +15,7 @@ interface ProductGridProps {
   onViewModeChange: (mode: "grid" | "list") => void
 }
 
-const allProducts = [
-  {
-    id: 1,
-    name: "CloudSync Pro",
-    category: "saas",
-    brand: "Brand Alpha",
-    price: 99,
-    description: "Enterprise cloud synchronization platform",
-    image: "/cloud-sync-software.jpg",
-  },
-  {
-    id: 2,
-    name: "DataVault Enterprise",
-    category: "saas",
-    brand: "Brand Beta",
-    price: 199,
-    description: "Secure data management solution",
-    image: "/data-vault-software.jpg",
-  },
-  {
-    id: 3,
-    name: "Analytics Dashboard",
-    category: "saas",
-    brand: "Brand Gamma",
-    price: 149,
-    description: "Real-time analytics and reporting",
-    image: "/analytics-dashboard.png",
-  },
-  {
-    id: 4,
-    name: "Web Development Mastery",
-    category: "book",
-    brand: "Brand Alpha",
-    price: 49,
-    description: "Complete guide to modern web development",
-    image: "/web-development-book.jpg",
-  },
-  {
-    id: 5,
-    name: "Design Systems Guide",
-    category: "book",
-    brand: "Brand Beta",
-    price: 39,
-    description: "Building scalable design systems",
-    image: "/design-systems-book.jpg",
-  },
-  {
-    id: 6,
-    name: "AI & Machine Learning",
-    category: "book",
-    brand: "Brand Gamma",
-    price: 59,
-    description: "Practical AI implementation guide",
-    image: "/ai-machine-learning-book.jpg",
-  },
-  {
-    id: 7,
-    name: "CodeStudio IDE",
-    category: "software",
-    brand: "Brand Alpha",
-    price: 79,
-    description: "Professional development environment",
-    image: "/code-studio-ide.jpg",
-  },
-  {
-    id: 8,
-    name: "DesignPro Suite",
-    category: "software",
-    brand: "Brand Beta",
-    price: 129,
-    description: "Complete design and prototyping toolkit",
-    image: "/design-pro-suite.jpg",
-  },
-  {
-    id: 9,
-    name: "DevTools Pro",
-    category: "software",
-    brand: "Brand Gamma",
-    price: 89,
-    description: "Advanced development utilities",
-    image: "/devtools-pro.jpg",
-  },
-  // ... (same product data as provided)
-]
+// Products are now imported from @/lib/products
 
 export default function ProductGrid({
   selectedCategory,
@@ -132,20 +51,46 @@ export default function ProductGrid({
         break
     }
 
+    // Show all products
     return sorted
   }, [selectedCategory, sortBy])
 
   return (
-    <main className="flex-1 p-4 sm:p-6 lg:p-8">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-          {selectedCategory === "all"
-            ? "All Products"
-            : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
-        </h1>
-        <p className="text-sm sm:text-base text-gray-600">
-          Showing {filteredAndSortedProducts.length} product{filteredAndSortedProducts.length !== 1 ? "s" : ""}
-        </p>
+    <main className="flex-1 p-6 lg:p-8">
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              {selectedCategory === "all"
+                ? "All Products"
+                : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+            </h1>
+            <p className="text-gray-600 flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              Showing {filteredAndSortedProducts.length} product{filteredAndSortedProducts.length !== 1 ? "s" : ""}
+              <span className="text-sm text-gray-500 ml-2">
+                • Earn 2 credits per purchase
+              </span>
+            </p>
+          </div>
+          
+          {/* Quick Stats */}
+          <div className="flex items-center gap-4">
+            <div className="bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200">
+              <div className="text-xs text-gray-500">Avg. Price</div>
+              <div className="text-lg font-semibold text-gray-900">
+                ${Math.round(filteredAndSortedProducts.reduce((acc, p) => acc + p.price, 0) / filteredAndSortedProducts.length) || 0}
+              </div>
+            </div>
+            <div className="bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200">
+              <div className="text-xs text-gray-500">Credits Earned</div>
+              <div className="text-lg font-semibold text-indigo-600">
+                {filteredAndSortedProducts.length * 2}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <ProductTopbar
@@ -156,24 +101,47 @@ export default function ProductGrid({
       />
 
       {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          {filteredAndSortedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+          {filteredAndSortedProducts.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+            >
+              <ProductCard product={product} />
+            </motion.div>
           ))}
         </div>
       ) : (
-        <div className="space-y-4 sm:space-y-6">
-          {filteredAndSortedProducts.map((product) => (
-            <ProductListItem key={product.id} product={product} />
+        <div className="space-y-6">
+          {filteredAndSortedProducts.map((product, index) => (
+            <motion.div
+              key={product.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <ProductListItem product={product} />
+            </motion.div>
           ))}
         </div>
       )}
 
       {filteredAndSortedProducts.length === 0 && (
-        <div className="flex items-center justify-center min-h-[50vh] sm:min-h-[60vh]">
-          <p className="text-base sm:text-lg text-gray-600 text-center">
-            No products found in this category.
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
+          <p className="text-gray-600 mb-6 max-w-md">
+            We couldn&apos;t find any products matching your current filters. Try adjusting your search criteria.
           </p>
+          <button className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200">
+            Clear Filters
+          </button>
         </div>
       )}
     </main>

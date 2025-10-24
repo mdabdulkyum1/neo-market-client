@@ -38,6 +38,13 @@ A modern, responsive referral platform built with Next.js 15, where users can ea
 - **Mobile-first** approach
 - **Accessible** components
 
+### 💳 Payment Integration
+- **Backend API integration** with your neo-market-server
+- **Stripe payment processing** via backend
+- **Credit-based payments** for earned credits
+- **Secure transaction handling**
+- **Real-time payment status** updates
+
 ## 🛠️ Tech Stack
 
 ### Frontend

@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 import { userService } from "./services/userService";
 import UserProvider from "@/providers/UserProvider";
+import { CartProvider } from "@/providers/CartProvider";
 
 
 const geistSans = Geist({
@@ -36,18 +37,22 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <script src="https://js.stripe.com/v3/" async></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextAuthProvider>
           <UserProvider user={user}>
+            <CartProvider>
+              <Navbar></Navbar>
+              
+              {children}
 
-          <Navbar></Navbar>
-          
-          {children}
-
-          <Footer></Footer>
-        </UserProvider>
+              <Footer></Footer>
+            </CartProvider>
+          </UserProvider>
         </NextAuthProvider>
       </body>
     </html>

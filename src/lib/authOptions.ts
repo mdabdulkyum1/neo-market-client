@@ -22,7 +22,6 @@ export const authOptions: NextAuthOptions = {
          });
      
          const userData = data?.data;
-         console.log("✅ Backend login response:", userData);
      
          if (userData?.accessToken) {
            return {
