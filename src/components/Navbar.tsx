@@ -44,7 +44,7 @@ export default function Navbar() {
       >
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-indigo-600">
+          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent hover:from-indigo-700 hover:to-purple-700 transition-all duration-200">
             Neo Market
           </Link>
   
@@ -102,7 +102,7 @@ export default function Navbar() {
                 <motion.div variants={navItemVariants} initial="hidden" animate="visible">
                   <Link
                     href="/register"
-                    className="bg-indigo-500 text-white px-4 py-2 rounded-full hover:bg-indigo-600 transition"
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     Register
                   </Link>
@@ -169,7 +169,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-indigo-500 text-white px-4 py-2 rounded-full text-center hover:bg-indigo-600 transition"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-center hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Register

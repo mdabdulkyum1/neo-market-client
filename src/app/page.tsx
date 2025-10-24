@@ -52,7 +52,7 @@ export default function Home() {
           <motion.a
             variants={fadeIn}
             href="/dashboard"
-            className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition"
+            className="bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             Go to Dashboard
           </motion.a>
@@ -215,7 +215,7 @@ export default function Home() {
           </p>
           <a
             href="/register"
-            className="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition"
+            className="bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             Get Started
           </a>

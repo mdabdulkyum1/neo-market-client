@@ -9,17 +9,19 @@ type Props = {
 
 export default function DashboardLayout({ children }: Props) {
   return (
-    <div className="min-h-screen flex bg-gray-100 text-gray-800">
+    <div className="min-h-screen flex bg-gray-50 text-gray-800">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col md:ml-0">
         {/* Navbar */}
         <Navbar />
 
         {/* Page Content */}
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1 overflow-x-hidden">
+          {children}
+        </main>
       </div>
     </div>
   );
