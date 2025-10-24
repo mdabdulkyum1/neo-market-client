@@ -172,7 +172,7 @@ export function LoginForm() {
           </form>
 
           {/* Divider */}
-          <div className="mt-8 mb-6">
+          {/* <div className="mt-8 mb-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300" />
@@ -181,10 +181,10 @@ export function LoginForm() {
                 <span className="px-2 bg-white text-gray-500">Or continue with</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Social Login */}
-          <div className="space-y-3">
+          {/* <div className="space-y-3">
             <button
               type="button"
               className="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200"
@@ -197,7 +197,7 @@ export function LoginForm() {
               </svg>
               Continue with Google
             </button>
-          </div>
+          </div> */}
 
           {/* Sign Up Link */}
           <div className="mt-8 text-center">
