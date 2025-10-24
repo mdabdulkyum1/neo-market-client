@@ -8,7 +8,7 @@ export interface User {
   image?: string;
   role?: string;
   referralCode?: string;
-  credits?: string | number;
+  credits?: number;
   isEmailVerified: boolean;
 }
 

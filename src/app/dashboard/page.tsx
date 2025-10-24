@@ -1,22 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 import DashboardCard from "./components/DashboardCard";
-import ReferralTable from "./components/ReferralTable";
-import { useUserStore } from "@/stores/userStore";
+import { useDashboardStore } from "@/stores/dashboardStore";
+import Loading from "@/components/loading/Loading";
 
 export default function DashboardPage() {
-  const user = useUserStore((state) => state.user);
-
+  const { data: session, status } = useSession();
+  const { stats, fetchStats } = useDashboardStore();
+  
   const [copied, setCopied] = useState(false);
-  const referralLink = `https://neo-market-client.vercel.app/register?r=${user?.referralCode}`;
+    const referralLink = `https://neo-market-client.vercel.app/register?r=${stats?.user?.referralCode}`;
+
+useEffect(() => {
+    if (session?.accessToken) {
+      fetchStats(session?.accessToken);
+    }
+  }, [session, fetchStats]);
+
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(referralLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+  
+  if (status === "loading") return <Loading></Loading>;
+  if (!session) return <p>Not signed in</p>;
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -33,7 +46,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-indigo-200 text-sm">Total Credits</p>
-                <p className="text-2xl font-bold">8</p>
+                <p className="text-2xl font-bold">{stats?.user?.credits}</p>
               </div>
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,28 +97,25 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <DashboardCard 
             title="Total Credits Earned" 
-            value={8} 
+            value={stats?.user?.credits as number} 
             icon="credits"
             trend="+2 this week"
           />
           <DashboardCard 
             title="Referred Users" 
-            value={10} 
-            subtitle="4 converted users" 
+            value={stats?.stats?.totalReferredUsers as number} 
+            subtitle={`${stats?.stats?.convertedUsers} converted users`} 
             icon="users"
             trend="+1 this week"
           />
           <DashboardCard 
             title="Conversion Rate" 
-            value="40%" 
-            subtitle="4 out of 10 users" 
+            value={`${stats?.stats?.conversionRate}%`} 
+            subtitle={`${stats?.stats?.convertedUsers} out of ${stats?.stats?.totalReferredUsers} users`}
             icon="trend"
             trend="+5% this month"
           />
         </div>
-
-        {/* Referral Table */}
-        <ReferralTable />
       </div>
     </div>
   );

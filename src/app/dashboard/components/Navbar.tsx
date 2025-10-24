@@ -2,13 +2,20 @@
 import { Settings, LogOut, User, Bell, Search } from "lucide-react";
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { useUserStore } from "@/stores/userStore";
+import Loading from "@/components/loading/Loading";
 
 export default function Navbar() {
+
   const [open, setOpen] = useState(false);
-  
+  const user = useUserStore((state) => state.user);
+
   const handleLogout = async () => {
     await signOut({ callbackUrl: '/' });
   };
+
+
+  if (!user) return <Loading></Loading>;
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
@@ -44,16 +51,16 @@ export default function Navbar() {
                 <User className="w-5 h-5 text-indigo-600" />
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-gray-900">John Doe</p>
-                <p className="text-xs text-gray-500">john@example.com</p>
+                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
               </div>
             </button>
 
             {open && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
                 <div className="px-4 py-3 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">John Doe</p>
-                  <p className="text-sm text-gray-500">john@example.com</p>
+                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                  <p className="text-sm text-gray-500">{user?.email}</p>
                 </div>
                 
                 <div className="py-1">
@@ -67,10 +74,10 @@ export default function Navbar() {
                   </button>
                 </div>
                 
-                <div className="border-t border-gray-100 py-1">
+                <div className="border-t border-gray-100 py-1 cursor-pointer">
                   <button 
                     onClick={handleLogout}
-                    className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
+                    className="cursor-pointer flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
                   >
                     <LogOut className="w-4 h-4 mr-3" />
                     Sign out

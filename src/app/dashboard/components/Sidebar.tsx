@@ -1,13 +1,12 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, User, Users, CreditCard, ShoppingCart, Settings, Menu, X } from "lucide-react";
+import { Home, User, Users, ShoppingCart, Settings, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 const links = [
   { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/dashboard/profile", label: "Profile", icon: User },
-  { href: "/dashboard/credits", label: "My Credits", icon: CreditCard },
   { href: "/dashboard/referrals", label: "Referrals", icon: Users },
   { href: "/dashboard/purchases", label: "Purchases", icon: ShoppingCart },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
