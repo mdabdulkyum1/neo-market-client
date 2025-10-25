@@ -9,16 +9,18 @@ import { signOut, useSession } from 'next-auth/react';
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/providers/CartProvider";
+import { useUserStore } from "@/stores/userStore";
 
 export default function Navbar() {
+  const user = useUserStore((state) => state.user);
   const pathname = usePathname();
-  // Use NextAuth session hook to check auth status
+  
   const { data: session, status } = useSession();
   const { getTotalItems } = useCart();
   const isLoggedIn = status === 'authenticated';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Animation variants
+
   const navItemVariants = {
     hidden: { opacity: 0, y: -10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
@@ -29,7 +31,6 @@ export default function Navbar() {
     visible: { opacity: 1, height: 'auto', transition: { duration: 0.3 } },
   };
 
-  // Handle logout
   const handleLogout = async () => {
     await signOut({ callbackUrl: '/' });
     setIsMobileMenuOpen(false);
@@ -85,7 +86,7 @@ export default function Navbar() {
                 </motion.div>
                 <motion.div variants={navItemVariants} initial="hidden" animate="visible">
                   <Image
-                        src={session.user?.image || "https://ui-avatars.com/api/?name=User+Name&background=0073B1&color=fff"}
+                        src={user?.image || "https://ui-avatars.com/api/?name=User+Name&background=0073B1&color=fff"}
                         alt="User"
                         width={32}
                         height={32}

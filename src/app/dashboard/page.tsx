@@ -67,18 +67,35 @@ useEffect(() => {
               <p className="text-gray-600 mb-4">
                 Share this link with friends to earn credits when they sign up and make purchases
               </p>
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border">
-                <div className="flex-1 min-w-0">
-                  <span className="text-indigo-600 text-sm font-mono break-all">{referralLink}</span>
-                </div>
-                <button
-                  onClick={handleCopy}
-                  className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors duration-200 whitespace-nowrap"
-                >
-                  <Copy className="w-4 h-4" />
-                  {copied ? "Copied!" : "Copy Link"}
-                </button>
-              </div>
+             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200 shadow-sm">
+  {/* Referral link */}
+  <div className="flex-1 min-w-0">
+    <span
+      className="text-indigo-600 text-sm sm:text-base font-mono block truncate"
+      title={referralLink}
+    >
+      {/* Shortened link for mobile */}
+      <span className="sm:hidden">
+        {referralLink?.length > 25
+          ? referralLink.slice(0, 25) + "..."
+          : referralLink}
+      </span>
+
+      {/* Full link for tablet & desktop */}
+      <span className="hidden sm:inline">{referralLink}</span>
+    </span>
+  </div>
+
+  {/* Copy button */}
+  <button
+    onClick={handleCopy}
+    className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 active:bg-indigo-800 transition-all duration-200 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+  >
+    <Copy className="w-4 h-4" />
+    {copied ? "Copied!" : "Copy Link"}
+  </button>
+</div>
+
             </div>
             <div className="lg:w-48">
               <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4 text-center">

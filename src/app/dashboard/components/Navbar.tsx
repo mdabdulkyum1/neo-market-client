@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useUserStore } from "@/stores/userStore";
 import Loading from "@/components/loading/Loading";
+import Image from "next/image";
 
 export default function Navbar() {
 
@@ -44,7 +45,14 @@ export default function Navbar() {
               onClick={() => setOpen(!open)}
             >
               <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-indigo-600" />
+                <Image
+                                        src={user?.image || "https://ui-avatars.com/api/?name=User+Name&background=0073B1&color=fff"}
+                                        alt="User"
+                                        width={32}
+                                        height={32}
+                                        className="rounded-full"
+                                        title={user?.name}
+                                      />
               </div>
               <div className="hidden md:block text-left">
                 <p className="text-sm font-medium text-gray-900">{user?.name}</p>
