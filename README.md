@@ -98,7 +98,7 @@ A modern, responsive referral platform built with Next.js 15, where users can ea
    NEXTAUTH_SECRET=your-secret-key
    
    # Backend API
-   NEXT_PUBLIC_BACKEND_URL=https://neo-market-server.onrender.com/api/v1
+   NEXT_PUBLIC_BACKEND_URL=https://neo-market-server.vercel.app/api/v1
    
    # Google OAuth (Optional)
    GOOGLE_CLIENT_ID=your-google-client-id

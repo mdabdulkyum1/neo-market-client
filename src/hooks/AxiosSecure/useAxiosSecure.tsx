@@ -3,7 +3,7 @@
 // import { useNavigate } from 'react-router-dom';
 
 // const axiosInstance: AxiosInstance = axios.create({
-//   // baseURL: 'https://neo-market-server.onrender.com'
+//   // baseURL: 'https://neo-market-server.vercel.app'
 //   // baseURL: ''
 // });
 

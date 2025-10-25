@@ -16,13 +16,14 @@ import {
   Lock
 } from 'lucide-react';
 import { allProducts } from '@/lib/products';
+import { useUserStore } from '@/stores/userStore';
 
 export default function Home() {
+
+  const user = useUserStore((state) => state.user);
   
-  // Get featured products (first 3)
   const featuredProducts = allProducts.slice(0, 3);
 
-  // Animation variants
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -68,11 +69,11 @@ export default function Home() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
-                  href="/register"
+                  href={user ? "/dashboard" : "/register"}
                   className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-indigo-600 transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <Users className="w-5 h-5" />
-                  Join Free
+                  {user ? "Dashboard" : "Join Free"}
                 </Link>
               </div>
               <div className="flex items-center gap-6 text-sm">
@@ -320,11 +321,11 @@ export default function Home() {
               Start Shopping
             </Link>
             <Link
-              href="/register"
+              href={user ? "/dashboard" : "/register"}
               className="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-indigo-600 transition-all duration-200 flex items-center justify-center gap-2"
             >
               <Users className="w-5 h-5" />
-              Create Account
+              {user ? "Explore" : "Create Account"}
             </Link>
           </div>
         </div>

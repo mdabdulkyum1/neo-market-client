@@ -10,8 +10,10 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import { userService } from "@/app/services/userService";
+import { useUserStore } from "@/stores/userStore";
 
-// Validation Schema
+
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
   password: z
@@ -24,6 +26,8 @@ type FormData = z.infer<typeof formSchema>;
 export function LoginForm() {
   const { data: session, status } = useSession();
   const router = useRouter();
+
+    const setUser = useUserStore((state) => state.setUser);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -57,10 +61,17 @@ export function LoginForm() {
   };
 
   useEffect(() => {
+
+    async function getUser() {
+      const user = session?.accessToken ? await userService.getMe(session?.accessToken) : null;
+      setUser(user);
+    }
+
     if (status === "authenticated" && session) {
+      getUser();
       router.push("/");
     }
-  }, [status, session, router]);
+  }, [status, session, router, setUser]);
 
   if (status === "loading") return <p>Loading...</p>;
 

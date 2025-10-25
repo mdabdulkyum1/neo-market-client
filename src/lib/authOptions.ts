@@ -4,7 +4,7 @@ import type { NextAuthOptions } from "next-auth";
 import axios from "axios";
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "https://neo-market-server.onrender.com/api/v1";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "https://neo-market-server.vercel.app/api/v1";
 
 export const authOptions: NextAuthOptions = {
   providers: [

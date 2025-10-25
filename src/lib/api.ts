@@ -1,7 +1,7 @@
 
 import axios, { AxiosInstance } from "axios";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://neo-market-server.onrender.com/api/v1";
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://neo-market-server.vercel.app/api/v1";
 
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,

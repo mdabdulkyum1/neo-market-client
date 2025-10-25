@@ -6,6 +6,7 @@ import ProductCard from "./product-card"
 import ProductTopbar from "./product-topbar"
 import ProductListItem from "./product-list-item"
 import { allProducts } from "@/lib/products"
+import { useUserStore } from "@/stores/userStore"
 
 interface ProductGridProps {
   selectedCategory: string
@@ -24,6 +25,10 @@ export default function ProductGrid({
   viewMode,
   onViewModeChange,
 }: ProductGridProps) {
+
+    const user = useUserStore((state) => state.user);
+
+
   const filteredAndSortedProducts = useMemo(() => {
     let products = allProducts
 
@@ -86,7 +91,7 @@ export default function ProductGrid({
             <div className="bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200">
               <div className="text-xs text-gray-500">Credits Earned</div>
               <div className="text-lg font-semibold text-indigo-600">
-                {filteredAndSortedProducts.length * 2}
+                {user?.credits || 0}
               </div>
             </div>
           </div>
@@ -101,7 +106,7 @@ export default function ProductGrid({
       />
 
       {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 lg:gap-6">
           {filteredAndSortedProducts.map((product, index) => (
             <motion.div
               key={product.id}
