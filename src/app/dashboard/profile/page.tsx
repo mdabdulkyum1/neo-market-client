@@ -54,7 +54,7 @@ export default function DashboardProfile() {
       <div className="flex items-center space-x-6">
         <Image
           src={
-            preview ||
+            preview || user?.image ||
             "https://ui-avatars.com/api/?name=User+Name&background=0073B1&color=fff"
           }
           alt="Profile"
