@@ -1,25 +1,33 @@
 "use client";
 
+import { imageUpload } from "@/lib/utils";
 import { useUserStore } from "@/stores/userStore";
+import api, { setAuthToken } from "@/lib/api";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://neo-market-server.onrender.com/api/v1";
 
 export default function DashboardProfile() {
+  const {data: session} = useSession();
   const user = useUserStore((state) => state.user);
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
 
-//   const handleImageUpload = async (e: any) => {
-//     const file = e.target.files[0];
-//     const formData = new FormData();
-//     formData.append("file", file);
+    if (!file) return;
 
-//     const res = await axios.post("/api/upload", formData); 
-//     setImage(res.data.url);
-//   };
+    const image = await imageUpload(file);
 
-//   const handleSave = async () => {
-//     await axios.put("/api/user/update", { name, image }); 
-//     alert("Profile updated!");
-//   };
+    if (image) {
+      handleSave(image);
+    }
+  };
+
+  const handleSave = async (image: string) => {
+    setAuthToken(session?.accessToken);
+    await api.put(`${BASE_URL}/users/me/uploads-profile-photo`, { image });
+  };
 
   return (
     <div className="space-y-6">
@@ -37,6 +45,11 @@ export default function DashboardProfile() {
           <label className="block mb-2 font-medium">Change Image:</label>
           <input type="file" />
         </div>
+        
+        <div>
+           <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700" onClick={()=> handleImageUpload}>Upload Image</button>
+        </div>
+
       </div>
 
       <div className="space-y-4">
@@ -52,12 +65,6 @@ export default function DashboardProfile() {
           <input className="border rounded p-2 w-full bg-gray-100" value={user?.email || "N/A"}  disabled />
         </div>
       </div>
-
-      <button
-        className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-      >
-        Save Changes
-      </button>
     </div>
   );
 }
